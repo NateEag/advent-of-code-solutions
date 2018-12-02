@@ -1,0 +1,11 @@
+#! /bin/bash
+
+frequency=0
+
+cur_dir="$(dirname "$0")"
+
+while read -r frequency_delta || [[ -n "$frequency_delta" ]]; do
+    ((frequency = frequency + frequency_delta))
+done < "$cur_dir/input.txt"
+
+echo $frequency
