@@ -1,0 +1,27 @@
+#! /usr/bin/env python
+
+import sys
+
+input_path = sys.argv[1]
+
+input_file = open(input_path, 'r')
+
+frequency = 0
+frequency_deltas = []
+frequencies = {}
+
+for line in input_file.readlines():
+    frequency_deltas.append(int(line))
+
+num_frequency_deltas = len(frequency_deltas)
+
+i = 0
+while frequency not in frequencies:
+    frequencies[frequency] = frequency
+    frequency += frequency_deltas[i]
+
+    i += 1
+    if i == num_frequency_deltas:
+        i = 0
+
+print frequency
