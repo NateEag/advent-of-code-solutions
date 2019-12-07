@@ -15,16 +15,27 @@ debug = False
 # FIXME I now have to update all these to take in
 def add_operator(left_param, right_param, output_param):
     left_value = program[left_param['value']] if left_param['mode'] is 0 else left_param['value']
-    right_value = program[right_param['value']] if right_param['mode'] is 0 else left_param['value']
+    right_value = program[right_param['value']] if right_param['mode'] is 0 else right_param['value']
 
     program[output_param['value']] = left_value + right_value
+
+    if debug:
+        print('Left value',
+              left_value,
+              'right value',
+              right_value,
+              'result',
+              program[output_param['value']])
 
 
 def multiply_operator(left_param, right_param, output_param):
     left_value = program[left_param['value']] if left_param['mode'] is 0 else left_param['value']
-    right_value = program[right_param['value']] if right_param['mode'] is 0 else left_param['value']
+    right_value = program[right_param['value']] if right_param['mode'] is 0 else right_param['value']
 
     program[output_param['value']] = left_value * right_value
+
+    if debug:
+        print(program[output_param['value']])
 
 
 def store_operator(param):
@@ -34,9 +45,9 @@ def store_operator(param):
 
 
 def output_operator(param):
-    address = program[param['value']] if param['mode'] is 0 else param['value']
+    value = program[param['value']] if param['mode'] is 0 else param['value']
 
-    print(program[address])
+    print('Output', value)
 
 
 def noop_operator():
@@ -91,7 +102,20 @@ def run_intcode_program(input_path, debug=False):
 
         if opcode == 99:
             halted = True
+            # TODO Output the name of previous instruction? For day 5 it would
+            # help understand what's going wrong.
+            print('Halt instruction reached')
             break
+
+        if debug:
+            print('Instruction #:',
+                  instruction_index,
+                  'Instruction',
+                  program[instruction_index],
+                  'opcode',
+                  opcode_string,
+                  'modes',
+                  modes)
 
         num_params = opcodes[opcode]['num_params']
 
@@ -106,9 +130,7 @@ def run_intcode_program(input_path, debug=False):
         operator_function = opcodes[opcode]['function']
         operator_function(*params)
 
-        instruction_index += num_params
-        if debug:
-            print(instruction_index)
+        instruction_index += num_params + 1
 
 
 if __name__ == '__main__':
