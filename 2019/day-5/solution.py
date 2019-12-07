@@ -12,10 +12,18 @@ program = None
 debug = False
 
 
-# FIXME I now have to update all these to take in
-def add_operator(left_param, right_param, output_param):
-    left_value = program[left_param['value']] if left_param['mode'] is 0 else left_param['value']
-    right_value = program[right_param['value']] if right_param['mode'] is 0 else right_param['value']
+def get_param_value(param):
+    # I imagine there will eventually be modes beyond 'position' and
+    # 'immediate', but until there are this should be enough.
+    return program[param['value']] if param['mode'] is 0 else param['value']
+
+
+# TODO Abstract the operation of running an instruction? The ones that use two
+# values look awful similar, and then they could share debugging info.
+
+def add_instruction(left_param, right_param, output_param):
+    left_value = get_param_value(left_param)
+    right_value = get_param_value(right_param)
 
     program[output_param['value']] = left_value + right_value
 
@@ -28,9 +36,9 @@ def add_operator(left_param, right_param, output_param):
               program[output_param['value']])
 
 
-def multiply_operator(left_param, right_param, output_param):
-    left_value = program[left_param['value']] if left_param['mode'] is 0 else left_param['value']
-    right_value = program[right_param['value']] if right_param['mode'] is 0 else right_param['value']
+def multiply_instruction(left_param, right_param, output_param):
+    left_value = get_param_value(left_param)
+    right_value = get_param_value(right_param)
 
     program[output_param['value']] = left_value * right_value
 
@@ -38,19 +46,19 @@ def multiply_operator(left_param, right_param, output_param):
         print(program[output_param['value']])
 
 
-def store_operator(param):
+def store_instruction(param):
     value = input('>')
 
     program[param['value']] = int(value)
 
 
-def output_operator(param):
-    value = program[param['value']] if param['mode'] is 0 else param['value']
+def output_instruction(param):
+    value = get_param_value(param)
 
     print('Output', value)
 
 
-def noop_operator():
+def noop_instruction():
     pass
 
 
@@ -58,23 +66,23 @@ def noop_operator():
 # now, though.
 opcodes = {
     1: {
-        'function': add_operator,
+        'function': add_instruction,
         'num_params': 3
     },
     2: {
-        'function': multiply_operator,
+        'function': multiply_instruction,
         'num_params': 3
     },
     3: {
-        'function': store_operator,
+        'function': store_instruction,
         'num_params': 1
     },
     4: {
-        'function': output_operator,
+        'function': output_instruction,
         'num_params': 1
     },
     99: {
-        'function': noop_operator,
+        'function': noop_instruction,
         'num_params': 0
     }
 }
