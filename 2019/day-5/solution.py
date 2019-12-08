@@ -3,14 +3,13 @@
 import sys
 import os
 
-# Make the input program a global so the operator functions have access to it
-# via closure.
+# A few module-level variables, because closures are an easy way to share
+# state.
 #
 # Would be more modular to pass this to each of them. Oh well.
 program = None
-
 debug = False
-
+instruction_index = 0
 
 def get_param_value(param):
     # I imagine there will eventually be modes beyond 'position' and
@@ -58,6 +57,48 @@ def output_instruction(param):
     print('Output', value)
 
 
+def jump_if_true_instruction(test_param, jump_param):
+    test_value = get_param_value(test_param)
+    address = get_param_value(jump_param)
+
+    if test_value != 0:
+        global instruction_index
+        instruction_index = address
+
+
+def jump_if_false_instruction(test_param, jump_param):
+    test_value = get_param_value(test_param)
+    address = get_param_value(jump_param)
+
+    if test_value == 0:
+        global instruction_index
+        instruction_index = address
+
+
+def less_than_instruction(left_param, right_param, output_param):
+    left_value = get_param_value(left_param)
+    right_value = get_param_value(right_param)
+
+    output_address = output_param['value']
+
+    if left_value < right_value:
+        program[output_address] = 1
+    else:
+        program[output_address] = 0
+
+
+def equals_instruction(left_param, right_param, output_param):
+    left_value = get_param_value(left_param)
+    right_value = get_param_value(right_param)
+
+    output_address = output_param['value']
+
+    if left_value == right_value:
+        program[output_address] = 1
+    else:
+        program[output_address] = 0
+
+
 def noop_instruction():
     pass
 
@@ -81,6 +122,22 @@ opcodes = {
         'function': output_instruction,
         'num_params': 1
     },
+    5: {
+        'function': jump_if_true_instruction,
+        'num_params': 2
+    },
+    6: {
+        'function': jump_if_false_instruction,
+        'num_params': 2
+    },
+    7: {
+        'function': less_than_instruction,
+        'num_params': 3
+    },
+    8: {
+        'function': equals_instruction,
+        'num_params': 3
+    },
     99: {
         'function': noop_instruction,
         'num_params': 0
@@ -96,9 +153,10 @@ def run_intcode_program(input_path, debug=False):
     program = [int(x) for x in program_file.read().split(',')]
 
     halted = False
-    instruction_index = 0
+    global instruction_index
 
     while halted != True:
+        cur_instruction_address = instruction_index
         opcode_string = str(program[instruction_index])
         opcode_string = opcode_string.zfill(5)
 
@@ -138,7 +196,9 @@ def run_intcode_program(input_path, debug=False):
         operator_function = opcodes[opcode]['function']
         operator_function(*params)
 
-        instruction_index += num_params + 1
+        if cur_instruction_address == instruction_index:
+            # No jump has been performed, so increment instruction pointer
+            instruction_index += num_params + 1
 
 
 if __name__ == '__main__':
