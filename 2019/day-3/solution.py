@@ -49,10 +49,17 @@ def between(n, left, right):
 
 
 def find_intersection(left_segment, right_segment):
-    left_seg_horizontal = left_segment[0][0] == left_segment[1][0]
-    left_seg_vertical = not left_seg_horizontal
-    right_seg_horizontal = right_segment[0][0] == right_segment[1][0]
-    right_seg_vertical = not right_seg_horizontal
+    known_intersector = (left_segment[0][0] == 3 and left_segment[0][1] == 5 and
+                         right_segment[0][0] == 6 and right_segment[0][1] == 3)
+
+    left_seg_vertical = left_segment[0][0] == left_segment[1][0]
+    left_seg_horizontal = not left_seg_vertical
+    right_seg_vertical = right_segment[0][0] == right_segment[1][0]
+    right_seg_horizontal = not right_seg_vertical
+
+    if known_intersector:
+        print('left segment is vertical? ' + str(left_seg_vertical))
+        print('right segment is horizontal? ' + str(right_seg_horizontal))
 
     if left_seg_horizontal:
         if right_seg_vertical:
