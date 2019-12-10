@@ -65,6 +65,7 @@ def find_intersection(left_segment, right_segment):
         if right_seg_vertical:
             if (between(right_segment[0][0], left_segment[0][0], left_segment[1][0]) and
                 between(left_segment[0][1], right_segment[0][1], right_segment[1][1])):
+                print(left_segment, '\n', right_segment)
                 return (right_segment[0][0], left_segment[0][1])
         elif right_seg_horizontal:
             if (between(right_segment[0][0], left_segment[0][0], left_segment[1][0]) and
@@ -80,7 +81,8 @@ def find_intersection(left_segment, right_segment):
         elif right_seg_horizontal:
             if (between(right_segment[0][1], left_segment[0][1], left_segment[1][1]) and
                 between(left_segment[0][0], right_segment[0][0], right_segment[1][0])):
-                return (right_segment[0][0], left_segment[0][1])
+                print(left_segment, '\n', right_segment)
+                return (left_segment[0][0], right_segment[0][1])
 
 
 def find_intersections(left_path, right_path):
