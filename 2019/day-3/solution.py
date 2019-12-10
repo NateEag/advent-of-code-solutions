@@ -48,25 +48,18 @@ def between(n, left, right):
     return ((left <= n <= right) or (left >= n >= right))
 
 
-def find_intersection(left_segment, right_segment):
-    known_intersector = (left_segment[0][0] == 3 and left_segment[0][1] == 5 and
-                         right_segment[0][0] == 6 and right_segment[0][1] == 3)
-
+def find_intersections(left_segment, right_segment):
     left_seg_vertical = left_segment[0][0] == left_segment[1][0]
     left_seg_horizontal = not left_seg_vertical
     right_seg_vertical = right_segment[0][0] == right_segment[1][0]
     right_seg_horizontal = not right_seg_vertical
 
-    if known_intersector:
-        print('left segment is vertical? ' + str(left_seg_vertical))
-        print('right segment is horizontal? ' + str(right_seg_horizontal))
-
     if left_seg_horizontal:
         if right_seg_vertical:
             if (between(right_segment[0][0], left_segment[0][0], left_segment[1][0]) and
                 between(left_segment[0][1], right_segment[0][1], right_segment[1][1])):
-                print(left_segment, '\n', right_segment)
-                return (right_segment[0][0], left_segment[0][1])
+
+                return [(right_segment[0][0], left_segment[0][1])]
         elif right_seg_horizontal:
             if (between(right_segment[0][0], left_segment[0][0], left_segment[1][0]) and
                 between(left_segment[0][1], right_segment[0][1], right_segment[1][1])):
@@ -81,11 +74,11 @@ def find_intersection(left_segment, right_segment):
         elif right_seg_horizontal:
             if (between(right_segment[0][1], left_segment[0][1], left_segment[1][1]) and
                 between(left_segment[0][0], right_segment[0][0], right_segment[1][0])):
-                print(left_segment, '\n', right_segment)
-                return (left_segment[0][0], right_segment[0][1])
+
+                return [(left_segment[0][0], right_segment[0][1])]
 
 
-def find_intersections(left_path, right_path):
+def find_all_intersections(left_path, right_path):
     intersections = []
 
     for i in range(0, len(left_path) - 1):
@@ -93,11 +86,11 @@ def find_intersections(left_path, right_path):
         for j in range(0, len(right_path) - 1):
             right_path_segment = (right_path[j], right_path[j + 1])
 
-            intersection = find_intersection(left_path_segment,
-                                             right_path_segment)
+            results = find_intersections(left_path_segment,
+                                         right_path_segment)
 
-            if intersection is not None:
-                intersections.append(intersection)
+            if results is not None:
+                intersections = intersections + results
 
     return intersections
 
@@ -123,7 +116,7 @@ def main(input_path):
 
     print(path_one, path_two)
 
-    intersections = find_intersections(path_one, path_two)
+    intersections = find_all_intersections(path_one, path_two)
 
     print(intersections)
 
