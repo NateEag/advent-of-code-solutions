@@ -109,7 +109,7 @@ def get_closest_distance(intersections):
         if intersection[0] == 0 and intersection[1] == 0:
             continue
 
-        distance = intersection[0] + intersection[1]
+        distance = abs(intersection[0]) + abs(intersection[1])
 
         if closest_distance is None or distance < closest_distance:
             closest_distance = distance
