@@ -15,7 +15,7 @@ def parse_path(input_line):
 
     points = [(0, 0)]
     for move in moves:
-        direction, length = move[0], int(move[1])
+        direction, length = move[0], int(move[1:])
         if direction == 'U':
             points.append((points[-1][0], points[-1][1] + length))
         elif direction == 'D':
