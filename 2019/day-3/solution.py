@@ -142,17 +142,61 @@ def get_closest_distance(intersections):
     return closest_distance
 
 
+def get_walk_length_to_intersection(intersection, path):
+    cost = 0
+
+    for i in range(0, len(path) - 1 - 1):
+        p1 = path[i]
+        p2 = path[i + 1]
+
+        if p1[0] == p2[0]:
+            # Horizontal line
+            points_between = [(p1[0], y) for y in unsorted_range(p1[1], p2[1])]
+            print(intersection, points_between)
+            if intersection in points_between:
+                return cost + abs(intersection[1] - p1[1])
+
+            cost += abs(p1[1] - p2[1])
+        else:
+            # Vertical line
+            points_between = [(x, p1[1]) for x in unsorted_range(p1[0], p2[0])]
+            print(intersection, points_between)
+            if intersection in points_between:
+                return cost + abs(intersection[0] - p1[0])
+
+            cost += abs(p1[0] - p2[0])
+
+
+def get_shortest_walk_to_intersection(intersections, left_path, right_path):
+    shortest_walk = None
+
+    for intersection in intersections:
+        left_cost = get_walk_length_to_intersection(intersection,
+                                                    left_path)
+
+        right_cost = get_walk_length_to_intersection(intersection,
+                                                     right_path)
+
+        if shortest_walk is None or left_cost < shortest_walk:
+            shortest_walk = left_cost
+
+        if right_cost < shortest_walk:
+            shortest_walk = right_cost
+
+    return shortest_walk
+
+
 def main(input_path):
     # TODO Implement this
-    path_one, path_two = parse_input(input_path)
+    left_path, right_path = parse_input(input_path)
 
-    print(path_one, path_two)
+    intersections = find_all_intersections(left_path, right_path)
 
-    intersections = find_all_intersections(path_one, path_two)
+    # distance = get_closest_distance(intersections)
 
-    print(intersections)
-
-    distance = get_closest_distance(intersections)
+    distance = get_shortest_walk_to_intersection(intersections,
+                                                 left_path,
+                                                 right_path)
 
     if distance is None:
         print('No intersections found. Go fix your bugs. :(')
