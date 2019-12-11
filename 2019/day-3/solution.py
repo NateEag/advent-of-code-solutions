@@ -89,10 +89,6 @@ def find_intersections(left_segment, right_segment):
 
                 shared_x_vals = intersection(left_segment_x_vals, right_segment_x_vals)
 
-                print(left_segment)
-                print(right_segment)
-                print(shared_x_vals)
-
                 return [(x, left_segment[0][1]) for x in shared_x_vals]
     elif left_seg_vertical:
         if right_seg_vertical:
@@ -124,6 +120,10 @@ def find_all_intersections(left_path, right_path):
             if results is not None:
                 intersections = intersections + results
 
+    if (0, 0) in intersections:
+        # This one should never be included.
+        intersections.remove((0, 0))
+
     return intersections
 
 
@@ -145,22 +145,20 @@ def get_closest_distance(intersections):
 def get_walk_length_to_intersection(intersection, path):
     cost = 0
 
-    for i in range(0, len(path) - 1 - 1):
+    for i in range(0, len(path) - 1):
         p1 = path[i]
         p2 = path[i + 1]
 
         if p1[0] == p2[0]:
-            # Horizontal line
-            points_between = [(p1[0], y) for y in unsorted_range(p1[1], p2[1])]
-            print(intersection, points_between)
+            # Vertical line
+            points_between = [(p1[0], y) for y in unsorted_range(p1[1], p2[1] + 1)]
             if intersection in points_between:
                 return cost + abs(intersection[1] - p1[1])
 
             cost += abs(p1[1] - p2[1])
         else:
-            # Vertical line
-            points_between = [(x, p1[1]) for x in unsorted_range(p1[0], p2[0])]
-            print(intersection, points_between)
+            # Horizontal line
+            points_between = [(x, p1[1]) for x in unsorted_range(p1[0], p2[0] + 1)]
             if intersection in points_between:
                 return cost + abs(intersection[0] - p1[0])
 
@@ -177,11 +175,12 @@ def get_shortest_walk_to_intersection(intersections, left_path, right_path):
         right_cost = get_walk_length_to_intersection(intersection,
                                                      right_path)
 
-        if shortest_walk is None or left_cost < shortest_walk:
-            shortest_walk = left_cost
+        path_cost = left_cost + right_cost
 
-        if right_cost < shortest_walk:
-            shortest_walk = right_cost
+        if shortest_walk is None:
+            shortest_walk = left_cost + right_cost
+        elif path_cost < shortest_walk:
+            shortest_walk = path_cost
 
     return shortest_walk
 
