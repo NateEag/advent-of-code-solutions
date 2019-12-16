@@ -46,6 +46,15 @@ class TreeNode:
         return count
 
 
+    def __str__(self):
+        result = self.data
+
+        for child in self.children:
+            result += ' <-- ' + str(child) + '\n'
+
+        return result
+
+
 def main(input_path):
     objects = {}
     with open(input_path, 'r') as f:
@@ -63,9 +72,13 @@ def main(input_path):
                 orbiter = objects[orbiter_id]
             else:
                 orbiter = TreeNode(orbiter_id, None)
+                objects[orbiter_id] = orbiter
 
             orbitee.add_child(orbiter)
 
+    # The exercise never specified clearly that everything indirectly orbits
+    # the universal Center of Mass, so I modeled this as a forest, not a single
+    # tree.
     root_nodes = []
     for key, obj in objects.items():
         if obj.parent is None:
