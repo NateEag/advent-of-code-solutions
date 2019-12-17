@@ -55,8 +55,9 @@ class TreeNode:
         return result
 
 
-def main(input_path):
+def parse_system_objects(input_path):
     objects = {}
+
     with open(input_path, 'r') as f:
         for line in f:
             line = line.strip()
@@ -76,25 +77,31 @@ def main(input_path):
 
             orbitee.add_child(orbiter)
 
-    # The exercise never specified clearly that everything indirectly orbits
-    # the universal Center of Mass, so I modeled this as a forest, not a single
-    # tree.
-    root_nodes = []
+    return objects
+
+
+def find_root_node(objects):
+    # Part 1 never specified clearly that everything indirectly orbits the
+    # universal Center of Mass, but part 2 does (implicitly, by establishing
+    # that you and Santa are always in the same tree, which means there is only
+    # a single tree, not a forest), so now I can assume that.
     for key, obj in objects.items():
         if obj.parent is None:
-            root_nodes.append(obj)
+            return obj
 
-    print('Root nodes', len(root_nodes))
 
-    total_num_orbits = 0
-    for node in root_nodes:
-        total_num_orbits += node.count_orbits()
+def count_orbits(input_path):
+    system_objects = parse_system_objects(input_path)
 
-    # First time I've submitted a wrong answer. Oh well.
-    #
-    # Site says my number is too low. Time to go digging.
-    print(total_num_orbits)
+    root_node = None
+    for key, obj in system_objects.items():
+        if obj.parent is None:
+            root_node = obj
+
+            break
+
+    print(root_node.count_orbits())
 
 
 if __name__ == '__main__':
-    main(sys.argv[1])
+    count_orbits(sys.argv[1])
