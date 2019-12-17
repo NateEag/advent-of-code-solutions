@@ -128,6 +128,7 @@ def find_root_node(objects):
         if obj.parent is None:
             return obj
 
+
 def find_common_ancestor(left_node, right_node):
     left_ancestor = left_node
 
